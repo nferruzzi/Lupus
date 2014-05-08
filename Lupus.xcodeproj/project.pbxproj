@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A55C0E8191BF8E200843DCD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A55C0E7191BF8E200843DCD /* MainStoryboard.storyboard */; };
+		8A55C0EB191BF91200843DCD /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A55C0EA191BF91200843DCD /* MainViewController.m */; };
 		8A8ECADD19043C5800BC3DAD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECADC19043C5800BC3DAD /* Foundation.framework */; };
 		8A8ECADF19043C5800BC3DAD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECADE19043C5800BC3DAD /* CoreGraphics.framework */; };
 		8A8ECAE119043C5800BC3DAD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECAE019043C5800BC3DAD /* UIKit.framework */; };
@@ -32,6 +34,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A55C0E7191BF8E200843DCD /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
+		8A55C0E9191BF91200843DCD /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		8A55C0EA191BF91200843DCD /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		8A8ECAD919043C5800BC3DAD /* Lupus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lupus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A8ECADC19043C5800BC3DAD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8A8ECADE19043C5800BC3DAD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -74,6 +79,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A55C0E6191BF89F00843DCD /* 1 step */ = {
+			isa = PBXGroup;
+			children = (
+				8A55C0E7191BF8E200843DCD /* MainStoryboard.storyboard */,
+				8A55C0E9191BF91200843DCD /* MainViewController.h */,
+				8A55C0EA191BF91200843DCD /* MainViewController.m */,
+			);
+			name = "1 step";
+			sourceTree = "<group>";
+		};
 		8A8ECAD019043C5700BC3DAD = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +122,7 @@
 		8A8ECAE219043C5800BC3DAD /* Lupus */ = {
 			isa = PBXGroup;
 			children = (
+				8A55C0E6191BF89F00843DCD /* 1 step */,
 				8A8ECAEB19043C5800BC3DAD /* AppDelegate.h */,
 				8A8ECAEC19043C5800BC3DAD /* AppDelegate.m */,
 				8A8ECAEE19043C5800BC3DAD /* Images.xcassets */,
@@ -219,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A55C0E8191BF8E200843DCD /* MainStoryboard.storyboard in Resources */,
 				8A8ECAE719043C5800BC3DAD /* InfoPlist.strings in Resources */,
 				8A8ECAEF19043C5800BC3DAD /* Images.xcassets in Resources */,
 			);
@@ -240,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A8ECAED19043C5800BC3DAD /* AppDelegate.m in Sources */,
+				8A55C0EB191BF91200843DCD /* MainViewController.m in Sources */,
 				8A8ECAE919043C5800BC3DAD /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,6 +455,7 @@
 				8A8ECB0719043C5800BC3DAD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8A8ECB0819043C5800BC3DAD /* Build configuration list for PBXNativeTarget "LupusTests" */ = {
 			isa = XCConfigurationList;
@@ -445,6 +464,7 @@
 				8A8ECB0A19043C5800BC3DAD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

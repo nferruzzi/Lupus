@@ -12,10 +12,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // 1) creiamo una window
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
+    self.window.backgroundColor = [UIColor yellowColor];
+    
+    // 2) carichiamo lo storyboard
+    UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    UIViewController *vc = [sb instantiateInitialViewController];
+    
+    // 3) usiamo il controller come root controller della window
+    [self.window setRootViewController:vc];
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
