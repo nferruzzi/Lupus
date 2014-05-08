@@ -12,6 +12,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    /*
+    // Si puo' evitare tutto semplicemente specificando nel plist il quale e' il
+    // nostro storyboard iniziale
+     
     // 1) creiamo una window
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor yellowColor];
@@ -23,7 +27,7 @@
     // 3) usiamo il controller come root controller della window
     [self.window setRootViewController:vc];
     [self.window makeKeyAndVisible];
-    
+    */
     return YES;
 }
 
