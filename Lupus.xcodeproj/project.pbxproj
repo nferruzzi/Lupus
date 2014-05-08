@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8A55C0E8191BF8E200843DCD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A55C0E7191BF8E200843DCD /* MainStoryboard.storyboard */; };
 		8A55C0EB191BF91200843DCD /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A55C0EA191BF91200843DCD /* MainViewController.m */; };
+		8A55C0EE191C242C00843DCD /* Lupus.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A55C0ED191C242C00843DCD /* Lupus.m */; };
 		8A8ECADD19043C5800BC3DAD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECADC19043C5800BC3DAD /* Foundation.framework */; };
 		8A8ECADF19043C5800BC3DAD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECADE19043C5800BC3DAD /* CoreGraphics.framework */; };
 		8A8ECAE119043C5800BC3DAD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECAE019043C5800BC3DAD /* UIKit.framework */; };
@@ -37,6 +38,8 @@
 		8A55C0E7191BF8E200843DCD /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
 		8A55C0E9191BF91200843DCD /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		8A55C0EA191BF91200843DCD /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		8A55C0EC191C242C00843DCD /* Lupus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lupus.h; sourceTree = "<group>"; };
+		8A55C0ED191C242C00843DCD /* Lupus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Lupus.m; sourceTree = "<group>"; };
 		8A8ECAD919043C5800BC3DAD /* Lupus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lupus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A8ECADC19043C5800BC3DAD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8A8ECADE19043C5800BC3DAD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -138,6 +141,8 @@
 				8A8ECAE519043C5800BC3DAD /* InfoPlist.strings */,
 				8A8ECAE819043C5800BC3DAD /* main.m */,
 				8A8ECAEA19043C5800BC3DAD /* Lupus-Prefix.pch */,
+				8A55C0EC191C242C00843DCD /* Lupus.h */,
+				8A55C0ED191C242C00843DCD /* Lupus.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -259,6 +264,7 @@
 				8A8ECAED19043C5800BC3DAD /* AppDelegate.m in Sources */,
 				8A55C0EB191BF91200843DCD /* MainViewController.m in Sources */,
 				8A8ECAE919043C5800BC3DAD /* main.m in Sources */,
+				8A55C0EE191C242C00843DCD /* Lupus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
