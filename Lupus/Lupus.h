@@ -7,12 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
+@import MultipeerConnectivity;
 
-@interface Lupus : NSObject
+extern NSString * const kLupusServiceType;
 
-+ (Lupus *)shared;
+@interface LupusGame : NSObject
 
-- (void)createGame:(NSDictionary *)options;
-- (void)showGames;
+@property (nonatomic, assign, readonly, getter = isMaster) BOOL master;
+@property (nonatomic, strong, readonly) NSString *name;
+
++ (id)lupusGameWithHostName:(NSString *)name
+                    options:(NSDictionary *)options;
+
++ (id)lupusGameWithPlayerName:(NSString *)name;
+
+- (MCBrowserViewController *)browser;
 
 @end

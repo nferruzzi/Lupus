@@ -5,61 +5,104 @@
 //  Created by Nicola Ferruzzi on 08/05/14.
 //  Copyright (c) 2014 Nicola Ferruzzi. All rights reserved.
 //
-
+//  Tutorial: http://nshipster.com/multipeer-connectivity/
+//
+@import MultipeerConnectivity;
 #import "Lupus.h"
 
-@import MultipeerConnectivity;
+NSString * const kLupusServiceType = @"dvlr-lupus";
 
-@interface Lupus () <MCSessionDelegate>
+#pragma mark LupusGame
 
-@property (nonatomic, strong) MCSession *session;
-@property (nonatomic, strong) MCPeerID *userPeer;
+@interface LupusGame () <MCNearbyServiceAdvertiserDelegate, MCSessionDelegate>
+@property (nonatomic, strong) NSMutableArray *sessions;
+@property (nonatomic, strong) MCPeerID *peerID;
+@property (nonatomic, strong) MCNearbyServiceAdvertiser *advertiser;
+@property (nonatomic, assign) BOOL master;
 @end
 
-@implementation Lupus
+@implementation LupusGame
 
-+ (Lupus *)shared
-{
-    static dispatch_once_t onceToken;
-    static Lupus *lupus;
-    dispatch_once(&onceToken, ^{
-        lupus = [[Lupus alloc] init];
-    });
- 
-    return lupus;
-}
-
-- (id)init
+- (id)initWithHostName:(NSString *)name
 {
     self = [super init];
     if (self) {
-        NSString *name = [[UIDevice currentDevice] name];
-        self.userPeer = [[MCPeerID alloc] initWithDisplayName:name];
+        self.sessions = [NSMutableArray new];
+        self.master = TRUE;
+        self.peerID = [[MCPeerID alloc] initWithDisplayName:name];
+        self.advertiser = [[MCNearbyServiceAdvertiser alloc] initWithPeer:_peerID
+                                                            discoveryInfo:nil
+                                                              serviceType:kLupusServiceType];
+        self.advertiser.delegate = self;
+        [self.advertiser startAdvertisingPeer];
     }
     return self;
 }
 
-- (void)createGame:(NSDictionary *)options
+- (id)initWithPlayerName:(NSString *)name
 {
-    NSAssert(_session, @"clean the previous session first");
-    
-    self.session = [[MCSession alloc] initWithPeer:_userPeer
-                                  securityIdentity:nil
-                              encryptionPreference:MCEncryptionOptional];
-    self.session.delegate = self;
+    self = [super init];
+    if (self) {
+        self.sessions = [NSMutableArray new];
+        self.master = TRUE;
+        self.peerID = [[MCPeerID alloc] initWithDisplayName:name];
+        MCSession *session = [[MCSession alloc] initWithPeer:_peerID
+                                            securityIdentity:nil
+                                        encryptionPreference:MCEncryptionNone];
+        self.sessions = [NSMutableArray arrayWithArray:@[session]];
+    }
+    return self;
 }
 
-- (void)showGames
++ (id)lupusGameWithHostName:(NSString *)name
+                    options:(NSDictionary *)options
 {
-    
+    LupusGame *lp = [[LupusGame alloc] initWithHostName:[[UIDevice currentDevice] name]];
+    return lp;
 }
 
-#pragma mark delegate
++ (id)lupusGameWithPlayerName:(NSString *)name
+{
+    LupusGame *lp = [[LupusGame alloc] initWithPlayerName:name];
+    return lp;
+}
+
+- (MCBrowserViewController *)browser
+{
+    MCBrowserViewController *vc = [[MCBrowserViewController alloc] initWithServiceType:kLupusServiceType
+                                                                               session:[_sessions lastObject]];
+    return vc;
+}
+
+
+#pragma mark advertiser
+
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID
+       withContext:(NSData *)context
+ invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
+{
+    MCSession *session = [_sessions lastObject];
+    if (!session) {
+        session = [[MCSession alloc] initWithPeer:_peerID
+                                 securityIdentity:nil
+                             encryptionPreference:MCEncryptionNone];
+        session.delegate = self;
+        [_sessions addObject:session];
+    }
+    invitationHandler(YES, session);
+}
+
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
+{
+    NSAssert(0, @"Error advertising:%@", error);
+}
+
+#pragma mark session
 
 // Remote peer changed state
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
-    
+    NSLog(@"STATE CHANGE: %@ %ld", peerID, state);
 }
 
 // Received data from remote peer
@@ -85,6 +128,5 @@
 {
     NSAssert(0, @"not supported");
 }
-
 
 @end
