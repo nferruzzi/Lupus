@@ -7,10 +7,12 @@
 //
 
 #import "MainViewController.h"
+#import "Lupus.h"
 
-@interface MainViewController ()
+@interface MainViewController () <MCBrowserViewControllerDelegate>
 
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
+@property (strong, nonatomic) LupusGame *game;
 @end
 
 @implementation MainViewController
@@ -50,11 +52,34 @@
 - (IBAction)onCreate:(id)sender
 {
     self.view.backgroundColor = [UIColor redColor];
+    self.game = [LupusGame lupusGameWithHostName:[[UIDevice currentDevice] name] options:nil];
 }
 
 - (IBAction)onSearch:(id)sender
 {
     self.view.backgroundColor = [UIColor greenColor];
+    self.game = [LupusGame lupusGameWithPlayerName:[[UIDevice currentDevice] name]];
+    MCBrowserViewController *vc = [self.game browser];
+    vc.delegate = self;
+    [self presentViewController:vc
+                       animated:true
+                     completion:^{
+                         [vc.browser startBrowsingForPeers];
+                     }];
+}
+
+// Notifies the delegate, when the user taps the done button
+- (void)browserViewControllerDidFinish:(MCBrowserViewController *)browserViewController
+{
+    [browserViewController.browser stopBrowsingForPeers];
+    [browserViewController dismissViewControllerAnimated:true completion:nil];
+}
+
+// Notifies delegate that the user taps the cancel button.
+- (void)browserViewControllerWasCancelled:(MCBrowserViewController *)browserViewController
+{
+    [browserViewController.browser stopBrowsingForPeers];
+    [browserViewController dismissViewControllerAnimated:true completion:nil];
 }
 
 @end
