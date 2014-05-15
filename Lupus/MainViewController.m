@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import "Lupus.h"
+#import "GameViewController.h"
 
 @interface MainViewController () <MCBrowserViewControllerDelegate>
 
@@ -38,7 +39,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -46,8 +46,11 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:@"segue_game"]) {
+        GameViewController *gvc = segue.destinationViewController;
+        [gvc setGame:_game];
+    }
 }
-*/
 
 - (IBAction)onCreate:(id)sender
 {
@@ -71,7 +74,8 @@
 {
     [browserViewController.browser stopBrowsingForPeers];
     [self.navigationController setNavigationBarHidden:FALSE];
-    UIViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"game"];
+    GameViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"game"];
+    [vc setGame:_game];
     [self.navigationController setViewControllers:@[self, vc] animated:TRUE];
 }
 
