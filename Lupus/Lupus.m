@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Nicola Ferruzzi. All rights reserved.
 //
 //  Tutorial: http://nshipster.com/multipeer-connectivity/
+//            http://www.appcoda.com/intro-multipeer-connectivity-framework-ios-programming/
 //
 @import MultipeerConnectivity;
 #import "Lupus.h"
@@ -19,6 +20,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 @property (nonatomic, strong) MCPeerID *peerID;
 @property (nonatomic, strong) MCNearbyServiceAdvertiser *advertiser;
 @property (nonatomic, assign) BOOL master;
+@property (nonatomic, assign) BOOL connectedToMaster;
 @end
 
 @implementation LupusGame
@@ -49,6 +51,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
         MCSession *session = [[MCSession alloc] initWithPeer:_peerID
                                             securityIdentity:nil
                                         encryptionPreference:MCEncryptionNone];
+        session.delegate = self;
         self.sessions = [NSMutableArray arrayWithArray:@[session]];
     }
     return self;
@@ -73,7 +76,6 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
                                                                                session:[_sessions lastObject]];
     return vc;
 }
-
 
 #pragma mark advertiser
 
@@ -103,6 +105,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
     NSLog(@"STATE CHANGE: %@ %ld", peerID, state);
+    self.connectedToMaster = state == MCSessionStateConnected;
 }
 
 // Received data from remote peer

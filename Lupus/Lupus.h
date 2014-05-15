@@ -14,6 +14,7 @@ extern NSString * const kLupusServiceType;
 @interface LupusGame : NSObject
 
 @property (nonatomic, assign, readonly, getter = isMaster) BOOL master;
+@property (nonatomic, assign, readonly, getter = isConnectedToMaster) BOOL connectedToMaster;
 @property (nonatomic, strong, readonly) NSString *name;
 
 + (id)lupusGameWithHostName:(NSString *)name
