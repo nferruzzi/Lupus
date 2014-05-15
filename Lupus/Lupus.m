@@ -11,6 +11,13 @@
 @import MultipeerConnectivity;
 #import "Lupus.h"
 
+// Comment to get multiple clients per session.
+// Note: there is no sessions limits but there is a maximum number of clients per session
+// if you undef then you have to manage the limit when the advertiser receive an
+// invitation.
+#define PERCLIENT_SESSION
+
+// Service type used by bonjour
 NSString * const kLupusServiceType = @"dvlr-lupus";
 
 #pragma mark LupusGame
@@ -84,7 +91,12 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
  invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
     MCSession *session = [_sessions lastObject];
+
+#ifdef PERCLIENT_SESSION
+    {
+#else
     if (!session) {
+#endif
         session = [[MCSession alloc] initWithPeer:_peerID
                                  securityIdentity:nil
                              encryptionPreference:MCEncryptionNone];
@@ -104,7 +116,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 // Remote peer changed state
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
-    NSLog(@"STATE CHANGE: %@ %ld", peerID, state);
+    NSLog(@"STATE CHANGE: %@ %d", peerID, (int)state);
     if (peerID == _peerID) {
         self.connectedToMaster = state == MCSessionStateConnected;
     }
