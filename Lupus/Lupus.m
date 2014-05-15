@@ -105,7 +105,9 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
     NSLog(@"STATE CHANGE: %@ %ld", peerID, state);
-    self.connectedToMaster = state == MCSessionStateConnected;
+    if (peerID == _peerID) {
+        self.connectedToMaster = state == MCSessionStateConnected;
+    }
 }
 
 // Received data from remote peer
