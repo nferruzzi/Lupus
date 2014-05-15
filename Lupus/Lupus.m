@@ -132,4 +132,109 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
     NSAssert(0, @"not supported");
 }
 
+#pragma mark Deck
+
+@end
+
+@implementation LupusGame (Deck)
+
++ (id)cardForRole:(LupusRole)role
+{
+    NSDictionary *card;
+    
+    switch (role) {
+        case LupusRoleVillico:
+            card = @{
+                @"label": @"Villico",
+                @"desc": @"",
+                @"images": @[@"villico1, villico2, villico3"],
+                @"role": @(LupusRoleVillico),
+            };
+            break;
+
+        case LupusRoleLupoMannaro:
+            card = @{
+                @"label": @"Lupo Mannaro",
+                @"desc": @"",
+                @"images": @[@"lupo"],
+                @"role": @(LupusRoleLupoMannaro),
+            };
+            break;
+
+        case LupusRoleGuardia:
+            card = @{
+                @"label": @"Guardia del corpo",
+                @"desc": @"",
+                @"images": @[@"guardia"],
+                @"role": @(LupusRoleGuardia),
+            };
+            break;
+
+        case LupusRoleMedium:
+            card = @{
+                @"label": @"Medium",
+                @"desc": @"",
+                @"images": @[@"medium"],
+                @"role": @(LupusRoleMedium),
+            };
+            break;
+
+        case LupusRoleVeggente:
+            card = @{
+                @"label": @"Veggente",
+                @"desc": @"",
+                @"images": @[@"veggente"],
+                @"role": @(LupusRoleVeggente),
+            };
+            break;
+
+        case LupusRoleTopoMannaro:
+            card = @{
+                @"label": @"Topo Mannaro",
+                @"desc": @"",
+                @"images": @[@"topo"],
+                @"role": @(LupusRoleTopoMannaro),
+            };
+            break;
+            
+        case LupusRoleMassone:
+            card = @{
+                @"label": @"Massone",
+                @"desc": @"",
+                @"images": @[@"massone1"],
+                @"role": @(LupusRoleMassone),
+            };
+            break;
+    };
+
+    return card;
+}
+
++ (NSArray *)newDeckForPlayersCount:(NSUInteger)players
+{
+    NSAssert(players, @"no one plays");
+    NSMutableArray *ar = [NSMutableArray arrayWithCapacity:players];
+    
+    [ar addObject:[self cardForRole:LupusRoleLupoMannaro]];
+    [ar addObject:[self cardForRole:LupusRoleLupoMannaro]];
+    
+    if (players >= 8) [self cardForRole:LupusRoleMedium];
+    if (players >= 9) [self cardForRole:LupusRoleVeggente];
+    if (players >= 12) [self cardForRole:LupusRoleGuardia];
+    if (players >= 14) {
+        [self cardForRole:LupusRoleMassone];
+        [self cardForRole:LupusRoleMassone];
+    }
+    if (players >= 18) {
+        [self cardForRole:LupusRoleTopoMannaro];
+    }
+    
+    while ([ar count] < players) {
+        [ar addObject:[self cardForRole:LupusRoleVillico]];
+    }
+    
+    return [NSArray arrayWithArray:ar];
+}
+
+
 @end

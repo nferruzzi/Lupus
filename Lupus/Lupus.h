@@ -11,6 +11,17 @@
 
 extern NSString * const kLupusServiceType;
 
+// Games role
+typedef NS_ENUM(NSInteger, LupusRole) {
+    LupusRoleVillico,
+    LupusRoleLupoMannaro,
+    LupusRoleGuardia,
+    LupusRoleMedium,
+    LupusRoleVeggente,
+    LupusRoleTopoMannaro,
+    LupusRoleMassone
+};
+
 @interface LupusGame : NSObject
 
 @property (nonatomic, assign, readonly, getter = isMaster) BOOL master;
@@ -23,5 +34,12 @@ extern NSString * const kLupusServiceType;
 + (id)lupusGameWithPlayerName:(NSString *)name;
 
 - (MCBrowserViewController *)browser;
+
+@end
+
+@interface LupusGame (Deck)
+
++ (id)cardForRole:(LupusRole)role;
++ (NSArray *)newDeckForPlayersCount:(NSUInteger)players;
 
 @end
