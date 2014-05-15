@@ -79,6 +79,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 
 - (MCBrowserViewController *)browser
 {
+    NSAssert(_master == FALSE, @"I'm a master");
     MCBrowserViewController *vc = [[MCBrowserViewController alloc] initWithServiceType:kLupusServiceType
                                                                                session:[_sessions lastObject]];
     return vc;
