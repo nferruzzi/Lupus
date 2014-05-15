@@ -79,6 +79,7 @@
 - (void)browserViewControllerWasCancelled:(MCBrowserViewController *)browserViewController
 {
     [browserViewController.browser stopBrowsingForPeers];
+    [self.navigationController setNavigationBarHidden:FALSE];
     [self.navigationController popViewControllerAnimated:TRUE];
     self.game = nil;
 }
