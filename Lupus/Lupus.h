@@ -13,20 +13,37 @@ extern NSString * const kLupusServiceType;
 
 // Games role
 typedef NS_ENUM(NSInteger, LupusRole) {
-    LupusRoleVillico,
-    LupusRoleLupoMannaro,
-    LupusRoleGuardia,
-    LupusRoleMedium,
-    LupusRoleVeggente,
-    LupusRoleTopoMannaro,
-    LupusRoleMassone
+    LupusRole_Villico,
+    LupusRole_LupoMannaro,
+    LupusRole_Guardia,
+    LupusRole_Medium,
+    LupusRole_Veggente,
+    LupusRole_TopoMannaro,
+    LupusRole_Massone
+};
+
+// Game state
+typedef NS_ENUM(NSInteger, LupusGameState) {
+    LupusGameState_Uninitialized,
+    LupusGameState_WaitingForPlayers,
+    LupusGameState_Started,
+};
+
+// Peer state
+typedef NS_ENUM(NSInteger, LupusPeerState) {
+    LupusPeerState_NotReady,
+    LupusPeerState_Ready,
 };
 
 @interface LupusGame : NSObject
 
 @property (nonatomic, assign, readonly, getter = isMaster) BOOL master;
-@property (nonatomic, assign, readonly, getter = isConnectedToMaster) BOOL connectedToMaster;
-@property (nonatomic, strong, readonly) NSString *name;
+@property (nonatomic, assign, readonly, getter = isConnected) BOOL connected;
+
+@property (nonatomic, strong, readonly) NSArray *playersName;
+@property (nonatomic, assign, readonly) LupusGameState gameState;
+@property (nonatomic, assign, readonly) LupusRole peerRole;
+@property (nonatomic, assign) LupusPeerState peerState;
 
 + (id)lupusGameWithHostName:(NSString *)name
                     options:(NSDictionary *)options;
