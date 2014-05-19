@@ -37,6 +37,16 @@
     if (!_game.isMaster) {
         [_game setStateForPlayer:LupusPlayerState_Joined];
     }
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                          target:self
+                                                                                          action:@selector(onBack:)];
+}
+
+- (void)onBack:(id)sender
+{
+    [self.game disconnect];
+    [self.navigationController popToRootViewControllerAnimated:TRUE];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -44,10 +54,10 @@
     [super viewWillAppear:animated];
 
     // Add observer
-    [_game addObserver:self
-            forKeyPath:@"masterState"
-               options:NSKeyValueObservingOptionNew
-               context:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onMasterStateChanged:)
+                                                 name:LupusMasterStateChanged
+                                               object:_game];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -55,8 +65,7 @@
     [super viewWillDisappear:animated];
     
     // Remove observer
-    [_game removeObserver:self
-               forKeyPath:@"masterState"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,16 +74,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)onMasterStateChanged:(NSNotification *)notification
 {
-    if (object == _game && [keyPath isEqualToString:@"masterState"]) {
-        NSLog(@"New masterState: %@", change[NSKeyValueChangeNewKey]);
-        [self.tableView performSelectorOnMainThread:@selector(reloadData)
-                                         withObject:nil
-                                      waitUntilDone:FALSE];
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
