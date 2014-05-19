@@ -10,9 +10,11 @@
 @import MultipeerConnectivity;
 
 extern NSString * const kLupusServiceType;
+extern NSString * const LupusMasterStateChanged;
 
 // Games role
 typedef NS_ENUM(NSInteger, LupusPlayerRole) {
+    LupusPlayerRole_Unknown,
     LupusPlayerRole_Villico,
     LupusPlayerRole_LupoMannaro,
     LupusPlayerRole_Guardia,
@@ -39,12 +41,13 @@ typedef NS_ENUM(NSInteger, LupusPlayerState) {
 @interface MasterState : NSObject <NSCoding, NSSecureCoding>
 
 @property (nonatomic, assign) LupusMasterState state;
-@property (nonatomic, strong) NSArray *playersName;
+@property (nonatomic, strong) NSArray *playersState;
 
 @end
 
 @interface PlayerState : NSObject <NSCoding, NSSecureCoding>
 
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic, assign) LupusPlayerRole role;
 @property (nonatomic, assign) LupusPlayerState state;
 
@@ -63,6 +66,7 @@ typedef NS_ENUM(NSInteger, LupusPlayerState) {
 + (id)lupusGameWithPlayerName:(NSString *)name;
 
 - (MCBrowserViewController *)browser;
+- (void)setStateForPlayer:(LupusPlayerState)state;
 
 @end
 

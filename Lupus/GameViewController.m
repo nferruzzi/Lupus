@@ -84,7 +84,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [_game.masterState.playersName count];
+    return [_game.masterState.playersState count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -93,7 +93,8 @@
                                                             forIndexPath:indexPath];
     
     // Configure the cell...
-    cell.textLabel.text = [_game.masterState.playersName objectAtIndex:indexPath.row];
+    PlayerState *ps = [_game.masterState.playersState objectAtIndex:indexPath.row];
+    cell.textLabel.text = ps.name;
     
     return cell;
 }
