@@ -10,7 +10,7 @@
 #import "Lupus.h"
 
 @interface GameViewController ()
-
+@property (nonatomic, strong) NSArray *arrayJoinedOnly;
 @end
 
 @implementation GameViewController
@@ -41,6 +41,9 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                           target:self
                                                                                           action:@selector(onBack:)];
+
+    // Configure first time
+    [self onMasterStateChanged:nil];
 }
 
 - (void)onBack:(id)sender
@@ -52,7 +55,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    
     // Add observer
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onMasterStateChanged:)
@@ -76,6 +79,13 @@
 
 - (void)onMasterStateChanged:(NSNotification *)notification
 {
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        PlayerState *ps = evaluatedObject;
+        return ps.state >= LupusPlayerState_Joined;
+    }];
+
+    self.arrayJoinedOnly = [_game.masterState.playersState filteredArrayUsingPredicate:predicate];
+
     [self.tableView reloadData];
 }
 
@@ -90,7 +100,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [_game.masterState.playersState count];
+    return [_arrayJoinedOnly count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -99,7 +109,7 @@
                                                             forIndexPath:indexPath];
     
     // Configure the cell...
-    PlayerState *ps = [_game.masterState.playersState objectAtIndex:indexPath.row];
+    PlayerState *ps = [_arrayJoinedOnly objectAtIndex:indexPath.row];
     cell.textLabel.text = ps.name;
     
     return cell;
