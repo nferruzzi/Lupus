@@ -65,7 +65,9 @@
 {
     if (object == _game && [keyPath isEqualToString:@"masterState"]) {
         NSLog(@"New masterState: %@", change[NSKeyValueChangeNewKey]);
-        [self.tableView reloadData];
+        [self.tableView performSelectorOnMainThread:@selector(reloadData)
+                                         withObject:nil
+                                      waitUntilDone:FALSE];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
