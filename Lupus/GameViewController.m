@@ -35,10 +35,40 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    // Add observer
+    [_game addObserver:self
+            forKeyPath:@"masterState"
+               options:NSKeyValueObservingOptionNew
+               context:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Remove observer
+    [_game removeObserver:self
+               forKeyPath:@"masterState"];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == _game && [keyPath isEqualToString:@"masterState"]) {
+        NSLog(@"New masterState: %@", change[NSKeyValueChangeNewKey]);
+        [self.tableView reloadData];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 #pragma mark - Table view data source
