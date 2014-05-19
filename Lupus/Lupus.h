@@ -12,14 +12,14 @@
 extern NSString * const kLupusServiceType;
 
 // Games role
-typedef NS_ENUM(NSInteger, LupusClientRole) {
-    LupusClientRole_Villico,
-    LupusClientRole_LupoMannaro,
-    LupusClientRole_Guardia,
-    LupusClientRole_Medium,
-    LupusClientRole_Veggente,
-    LupusClientRole_TopoMannaro,
-    LupusClientRole_Massone
+typedef NS_ENUM(NSInteger, LupusPlayerRole) {
+    LupusPlayerRole_Villico,
+    LupusPlayerRole_LupoMannaro,
+    LupusPlayerRole_Guardia,
+    LupusPlayerRole_Medium,
+    LupusPlayerRole_Veggente,
+    LupusPlayerRole_TopoMannaro,
+    LupusPlayerRole_Massone
 };
 
 // Game state
@@ -30,9 +30,10 @@ typedef NS_ENUM(NSInteger, LupusMasterState) {
 };
 
 // Peer state
-typedef NS_ENUM(NSInteger, LupusClientState) {
-    LupusClientState_NotReady,
-    LupusClientState_Ready,
+typedef NS_ENUM(NSInteger, LupusPlayerState) {
+    LupusPlayerState_NotJoined,
+    LupusPlayerState_Joined,
+    LupusPlayerState_JoinedAndReady,
 };
 
 @interface MasterState : NSObject <NSCoding, NSSecureCoding>
@@ -44,8 +45,8 @@ typedef NS_ENUM(NSInteger, LupusClientState) {
 
 @interface PlayerState : NSObject <NSCoding, NSSecureCoding>
 
-@property (nonatomic, assign) LupusClientRole role;
-@property (nonatomic, assign) LupusClientState state;
+@property (nonatomic, assign) LupusPlayerRole role;
+@property (nonatomic, assign) LupusPlayerState state;
 
 @end
 
@@ -67,7 +68,7 @@ typedef NS_ENUM(NSInteger, LupusClientState) {
 
 @interface LupusGame (Deck)
 
-+ (id)cardForRole:(LupusClientRole)role;
++ (id)cardForRole:(LupusPlayerRole)role;
 + (NSArray *)newDeckForPlayersCount:(NSUInteger)players;
 
 @end

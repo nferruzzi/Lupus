@@ -316,71 +316,71 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 
 @implementation LupusGame (Deck)
 
-+ (id)cardForRole:(LupusClientRole)role
++ (id)cardForRole:(LupusPlayerRole)role
 {
     NSDictionary *card;
     
     switch (role) {
-        case LupusClientRole_Villico:
+        case LupusPlayerRole_Villico:
             card = @{
                 @"label": @"Villico",
                 @"desc": @"",
                 @"images": @[@"villico1, villico2, villico3"],
-                @"role": @(LupusClientRole_Villico),
+                @"role": @(LupusPlayerRole_Villico),
             };
             break;
 
-        case LupusClientRole_LupoMannaro:
+        case LupusPlayerRole_LupoMannaro:
             card = @{
                 @"label": @"Lupo Mannaro",
                 @"desc": @"",
                 @"images": @[@"lupo"],
-                @"role": @(LupusClientRole_LupoMannaro),
+                @"role": @(LupusPlayerRole_LupoMannaro),
             };
             break;
 
-        case LupusClientRole_Guardia:
+        case LupusPlayerRole_Guardia:
             card = @{
                 @"label": @"Guardia del corpo",
                 @"desc": @"",
                 @"images": @[@"guardia"],
-                @"role": @(LupusClientRole_Guardia),
+                @"role": @(LupusPlayerRole_Guardia),
             };
             break;
 
-        case LupusClientRole_Medium:
+        case LupusPlayerRole_Medium:
             card = @{
                 @"label": @"Medium",
                 @"desc": @"",
                 @"images": @[@"medium"],
-                @"role": @(LupusClientRole_Medium),
+                @"role": @(LupusPlayerRole_Medium),
             };
             break;
 
-        case LupusClientRole_Veggente:
+        case LupusPlayerRole_Veggente:
             card = @{
                 @"label": @"Veggente",
                 @"desc": @"",
                 @"images": @[@"veggente"],
-                @"role": @(LupusClientRole_Veggente),
+                @"role": @(LupusPlayerRole_Veggente),
             };
             break;
 
-        case LupusClientRole_TopoMannaro:
+        case LupusPlayerRole_TopoMannaro:
             card = @{
                 @"label": @"Topo Mannaro",
                 @"desc": @"",
                 @"images": @[@"topo"],
-                @"role": @(LupusClientRole_TopoMannaro),
+                @"role": @(LupusPlayerRole_TopoMannaro),
             };
             break;
             
-        case LupusClientRole_Massone:
+        case LupusPlayerRole_Massone:
             card = @{
                 @"label": @"Massone",
                 @"desc": @"",
                 @"images": @[@"massone1"],
-                @"role": @(LupusClientRole_Massone),
+                @"role": @(LupusPlayerRole_Massone),
             };
             break;
     };
@@ -393,22 +393,22 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
     NSAssert(players, @"no one plays");
     NSMutableArray *ar = [NSMutableArray arrayWithCapacity:players];
     
-    [ar addObject:[self cardForRole:LupusClientRole_LupoMannaro]];
-    [ar addObject:[self cardForRole:LupusClientRole_LupoMannaro]];
+    [ar addObject:[self cardForRole:LupusPlayerRole_LupoMannaro]];
+    [ar addObject:[self cardForRole:LupusPlayerRole_LupoMannaro]];
     
-    if (players >= 8) [self cardForRole:LupusClientRole_Medium];
-    if (players >= 9) [self cardForRole:LupusClientRole_Veggente];
-    if (players >= 12) [self cardForRole:LupusClientRole_Guardia];
+    if (players >= 8) [self cardForRole:LupusPlayerRole_Medium];
+    if (players >= 9) [self cardForRole:LupusPlayerRole_Veggente];
+    if (players >= 12) [self cardForRole:LupusPlayerRole_Guardia];
     if (players >= 14) {
-        [self cardForRole:LupusClientRole_Massone];
-        [self cardForRole:LupusClientRole_Massone];
+        [self cardForRole:LupusPlayerRole_Massone];
+        [self cardForRole:LupusPlayerRole_Massone];
     }
     if (players >= 18) {
-        [self cardForRole:LupusClientRole_TopoMannaro];
+        [self cardForRole:LupusPlayerRole_TopoMannaro];
     }
     
     while ([ar count] < players) {
-        [ar addObject:[self cardForRole:LupusClientRole_Villico]];
+        [ar addObject:[self cardForRole:LupusPlayerRole_Villico]];
     }
     
     return [NSArray arrayWithArray:ar];
