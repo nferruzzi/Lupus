@@ -5,8 +5,12 @@
 //  Created by Nicola Ferruzzi on 08/05/14.
 //  Copyright (c) 2014 Nicola Ferruzzi. All rights reserved.
 //
+//  MultipeerConnectivity
 //  Tutorial: http://nshipster.com/multipeer-connectivity/
 //            http://www.appcoda.com/intro-multipeer-connectivity-framework-ios-programming/
+//
+//  NSCoding
+//  Tutorial: http://nshipster.com/nscoding/
 //
 @import MultipeerConnectivity;
 #import "Lupus.h"
@@ -20,6 +24,101 @@
 // Service type used by bonjour
 NSString * const kLupusServiceType = @"dvlr-lupus";
 
+@implementation MasterState
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    if (self) {
+        self.state = [[aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"state"] integerValue];
+        self.playersName = [aDecoder decodeObjectOfClass:[NSArray class] forKey:@"playersName"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:[NSNumber numberWithInteger:_state] forKey:@"state"];
+    [aCoder encodeObject:_playersName forKey:@"playersName"];
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return TRUE;
+}
+
+- (NSData *)dump
+{
+    NSMutableData *md = [NSMutableData new];
+    NSKeyedArchiver *ar = [[NSKeyedArchiver alloc] initForWritingWithMutableData:md];
+    [ar encodeObject:self forKey:@"master"];
+    [ar finishEncoding];
+    return md;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<MasterState: %ld, %@>", (long)_state, _playersName];
+}
+
++ (MasterState *)masterStateFromData:(NSData *)data
+{
+    NSKeyedUnarchiver *ar = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    MasterState *ms = [ar decodeObjectOfClass:[MasterState class] forKey:@"master"];
+    [ar finishDecoding];
+    return ms;
+}
+
+@end
+
+@implementation PlayerState
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    if (self) {
+        self.role = [[aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"role"] integerValue];
+        self.state = [[aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"state"] integerValue];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:[NSNumber numberWithInteger:_role] forKey:@"role"];
+    [aCoder encodeObject:[NSNumber numberWithInteger:_state] forKey:@"state"];
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return TRUE;
+}
+
+- (NSData *)dump
+{
+    NSMutableData *md = [NSMutableData new];
+    NSKeyedArchiver *ar = [[NSKeyedArchiver alloc] initForWritingWithMutableData:md];
+    [ar encodeObject:self forKey:@"player"];
+    [self encodeWithCoder:ar];
+    [ar finishEncoding];
+    return md;
+}
+
++ (PlayerState *)playerStateFromData:(NSData *)data
+{
+    NSKeyedUnarchiver *ar = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    PlayerState *ps = [ar decodeObjectOfClass:[PlayerState class] forKey:@"player"];
+    [ar finishDecoding];
+    return ps;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<PlayerState: %ld, %ld>", (long)_state, (long)_role];
+}
+
+@end
+
 #pragma mark LupusGame
 
 @interface LupusGame () <MCNearbyServiceAdvertiserDelegate, MCSessionDelegate>
@@ -28,10 +127,9 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 @property (nonatomic, strong) MCNearbyServiceAdvertiser *advertiser;
 @property (nonatomic, assign) BOOL master;
 @property (nonatomic, assign) BOOL connected;
-@property (nonatomic, strong) NSArray *playersName;
-@property (nonatomic, assign) LupusGameState gameState;
-@property (nonatomic, assign) LupusRole peerRole;
 @property (nonatomic, strong) NSMutableDictionary *peersState;
+@property (nonatomic, strong) MasterState *masterState;
+@property (nonatomic, strong) PlayerState *playerState;
 @end
 
 @implementation LupusGame
@@ -48,11 +146,12 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 
 - (id)initWithHostName:(NSString *)name
 {
-    self = [self init];
+    self = [self initWithName:name];
     if (self) {
-        self.gameState = LupusGameState_WaitingForPlayers;
-        self.peersState = [NSMutableDictionary dictionary];
         self.master = TRUE;
+        self.masterState = [MasterState new];
+        self.masterState.state = LupusMasterState_WaitingForPlayers;
+        self.peersState = [NSMutableDictionary dictionary];
         self.advertiser = [[MCNearbyServiceAdvertiser alloc] initWithPeer:_peerID
                                                             discoveryInfo:nil
                                                               serviceType:kLupusServiceType];
@@ -64,9 +163,10 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 
 - (id)initWithPlayerName:(NSString *)name
 {
-    self = [self init];
+    self = [self initWithName:name];
     if (self) {
         self.master = FALSE;
+        self.playerState = [PlayerState new];
         MCSession *session = [[MCSession alloc] initWithPeer:_peerID
                                             securityIdentity:nil
                                         encryptionPreference:MCEncryptionNone];
@@ -124,71 +224,7 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
     NSAssert(0, @"Error advertising:%@", error);
 }
 
-#pragma mark master to peers
-    
-- (NSData *)masterDataToPeer:(MCPeerID *)target
-{
-    NSMutableArray *players = [NSMutableArray array];
-    for (MCSession *session in _sessions) {
-        for (MCPeerID *peer in session.connectedPeers) {
-            if (target != peer)
-                [players addObject:peer.displayName];
-        }
-    }
-    
-    NSDictionary *payload = @{
-        @"name":_peerID.displayName,
-        @"gameState": @(_gameState),
-        @"players":players
-    };
-
-    NSError *error;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:payload
-                                                   options:0
-                                                     error:&error];
-    NSAssert(!error, @"error: %@", error);
-    return data;
-}
-    
-- (void)loadMasterData:(NSData *)data
-{
-    NSAssert(_master == FALSE, @"I'm a master");
-    NSError *error;
-    NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    NSAssert(!error, @"Error: %@", error);
-    NSAssert([payload isKindOfClass:[NSDictionary class]], @"don't know what expect");
-}
-    
-#pragma mark peer to master
-
-- (NSData *)peerDataToMaster
-{
-    NSAssert(_master == FALSE, @"I'm a master");
-    NSAssert(_connected, @"Not connected");
-    
-    NSDictionary *payload = @{
-        @"peerState": @(_peerState)
-    };
-    
-    NSError *error;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:payload
-                                                   options:0
-                                                     error:&error];
-    NSAssert(!error, @"Error: %@", error);
-    return data;
-}
-    
-- (void)loadPeerData:(NSData *)data fromPeer:(MCPeerID *)peer
-{
-    NSAssert(_master == TRUE, @"I'm not a master");
-    NSError *error;
-    NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    NSAssert(!error, @"Error: %@", error);
-    NSAssert([payload isKindOfClass:[NSDictionary class]], @"don't know what expect");
-}
-    
-#pragma mark peer state logic
-    
+#if 0
 - (void)setPeerState:(LupusPeerState)peerState
 {
     _peerState = peerState;
@@ -199,26 +235,39 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
              withMode:MCSessionSendDataReliable
                 error:nil];
 }
-
-#pragma mark session
+#endif
+    
+- (void)updatePlayersWithMasterState
+{
+    NSMutableArray *ar = [NSMutableArray new];
+    for (MCSession *session in _sessions) {
+        for (MCPeerID *peerId in session.connectedPeers) {
+            [ar addObject:peerId.displayName];
+        }
+    }
+    
+    _masterState.playersName = ar;
+    
+    NSData *data = [_masterState dump];
+    for (MCSession *session in _sessions) {
+        for (MCPeerID *peer in session.connectedPeers) {
+            [session sendData:data
+                      toPeers:@[peer]
+                     withMode:MCSessionSendDataUnreliable
+                        error:nil];
+        }
+    }
+}
     
 // Remote peer changed state
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
     NSLog(@"STATE CHANGE: %@ %d", peerID, (int)state);
     if (_master) {
-        for (MCSession *session in _sessions) {
-            for (MCPeerID *peer in session.connectedPeers) {
-                NSData *data = [self masterDataToPeer:peer];
-                [session sendData:data
-                          toPeers:@[peer]
-                         withMode:MCSessionSendDataUnreliable
-                            error:nil];
-            }
-        }
         if (state == MCSessionStateNotConnected) {
             [self.peersState removeObjectForKey:peerID];
         }
+        [self updatePlayersWithMasterState];
     } else {
         _connected = state == MCSessionStateConnected;
     }
@@ -229,9 +278,12 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 {
     NSLog(@"RECEIVED DATA FROM %@", peerID);
     if (_master) {
-        [self loadPeerData:data fromPeer:peerID];
+        PlayerState *ps = [PlayerState playerStateFromData:data];
+        [self.peersState setObject:ps forKey:peerID];
+        NSLog(@"Player state: %@", ps);
     } else {
-        [self loadMasterData:data];
+        self.masterState = [MasterState masterStateFromData:data];
+        NSLog(@"Master state: %@", _masterState);
     }
 }
 
@@ -264,71 +316,71 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
 
 @implementation LupusGame (Deck)
 
-+ (id)cardForRole:(LupusRole)role
++ (id)cardForRole:(LupusClientRole)role
 {
     NSDictionary *card;
     
     switch (role) {
-        case LupusRole_Villico:
+        case LupusClientRole_Villico:
             card = @{
                 @"label": @"Villico",
                 @"desc": @"",
                 @"images": @[@"villico1, villico2, villico3"],
-                @"role": @(LupusRole_Villico),
+                @"role": @(LupusClientRole_Villico),
             };
             break;
 
-        case LupusRole_LupoMannaro:
+        case LupusClientRole_LupoMannaro:
             card = @{
                 @"label": @"Lupo Mannaro",
                 @"desc": @"",
                 @"images": @[@"lupo"],
-                @"role": @(LupusRole_LupoMannaro),
+                @"role": @(LupusClientRole_LupoMannaro),
             };
             break;
 
-        case LupusRole_Guardia:
+        case LupusClientRole_Guardia:
             card = @{
                 @"label": @"Guardia del corpo",
                 @"desc": @"",
                 @"images": @[@"guardia"],
-                @"role": @(LupusRole_Guardia),
+                @"role": @(LupusClientRole_Guardia),
             };
             break;
 
-        case LupusRole_Medium:
+        case LupusClientRole_Medium:
             card = @{
                 @"label": @"Medium",
                 @"desc": @"",
                 @"images": @[@"medium"],
-                @"role": @(LupusRole_Medium),
+                @"role": @(LupusClientRole_Medium),
             };
             break;
 
-        case LupusRole_Veggente:
+        case LupusClientRole_Veggente:
             card = @{
                 @"label": @"Veggente",
                 @"desc": @"",
                 @"images": @[@"veggente"],
-                @"role": @(LupusRole_Veggente),
+                @"role": @(LupusClientRole_Veggente),
             };
             break;
 
-        case LupusRole_TopoMannaro:
+        case LupusClientRole_TopoMannaro:
             card = @{
                 @"label": @"Topo Mannaro",
                 @"desc": @"",
                 @"images": @[@"topo"],
-                @"role": @(LupusRole_TopoMannaro),
+                @"role": @(LupusClientRole_TopoMannaro),
             };
             break;
             
-        case LupusRole_Massone:
+        case LupusClientRole_Massone:
             card = @{
                 @"label": @"Massone",
                 @"desc": @"",
                 @"images": @[@"massone1"],
-                @"role": @(LupusRole_Massone),
+                @"role": @(LupusClientRole_Massone),
             };
             break;
     };
@@ -341,22 +393,22 @@ NSString * const kLupusServiceType = @"dvlr-lupus";
     NSAssert(players, @"no one plays");
     NSMutableArray *ar = [NSMutableArray arrayWithCapacity:players];
     
-    [ar addObject:[self cardForRole:LupusRole_LupoMannaro]];
-    [ar addObject:[self cardForRole:LupusRole_LupoMannaro]];
+    [ar addObject:[self cardForRole:LupusClientRole_LupoMannaro]];
+    [ar addObject:[self cardForRole:LupusClientRole_LupoMannaro]];
     
-    if (players >= 8) [self cardForRole:LupusRole_Medium];
-    if (players >= 9) [self cardForRole:LupusRole_Veggente];
-    if (players >= 12) [self cardForRole:LupusRole_Guardia];
+    if (players >= 8) [self cardForRole:LupusClientRole_Medium];
+    if (players >= 9) [self cardForRole:LupusClientRole_Veggente];
+    if (players >= 12) [self cardForRole:LupusClientRole_Guardia];
     if (players >= 14) {
-        [self cardForRole:LupusRole_Massone];
-        [self cardForRole:LupusRole_Massone];
+        [self cardForRole:LupusClientRole_Massone];
+        [self cardForRole:LupusClientRole_Massone];
     }
     if (players >= 18) {
-        [self cardForRole:LupusRole_TopoMannaro];
+        [self cardForRole:LupusClientRole_TopoMannaro];
     }
     
     while ([ar count] < players) {
-        [ar addObject:[self cardForRole:LupusRole_Villico]];
+        [ar addObject:[self cardForRole:LupusClientRole_Villico]];
     }
     
     return [NSArray arrayWithArray:ar];
