@@ -203,6 +203,12 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     return vc;
 }
 
+- (void)dealloc
+{
+    NSLog(@"Dealloc called");
+    [self disconnect];
+}
+
 #pragma mark advertiser
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID
@@ -228,6 +234,16 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
 {
     NSAssert(0, @"Error advertising:%@", error);
+}
+
+#pragma mark logic
+    
+- (void)dispatchAsyncNotification:(NSString *)name
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:name
+                                                            object:self];
+    });
 }
 
 - (void)setStateForPlayer:(LupusPlayerState)state
@@ -256,9 +272,19 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         }
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:LupusMasterStateChanged
-                                                        object:self];
+    [self dispatchAsyncNotification:LupusMasterStateChanged];
 }
+    
+- (void)disconnect
+{
+    for (MCSession *session in _sessions) {
+        [session disconnect];
+    }
+    
+    self.connected = FALSE;
+}
+    
+#pragma mark MCSession delegate
     
 // Remote peer changed state
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
@@ -290,8 +316,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         [self updatePlayersWithMasterState];
     } else {
         self.masterState = [MasterState masterStateFromData:data];
-        [[NSNotificationCenter defaultCenter] postNotificationName:LupusMasterStateChanged
-                                                            object:self];
+        [self dispatchAsyncNotification:LupusMasterStateChanged];
         NSLog(@"Master state: %@", _masterState);
     }
 }
