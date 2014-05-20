@@ -159,6 +159,17 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
+    // NON FATE I FURBI !!!
+    if (_game.isMaster) {
+        NSDictionary *card = [LupusGame cardForRole:ps.role];
+        NSArray *images = [card objectForKey:@"images"];
+        if (images) {
+            cell.imageView.image = [UIImage imageNamed:[images objectAtIndex:0]];
+        } else {
+            cell.imageView.image = nil;
+        }
+    }
+    
     return cell;
 }
 
