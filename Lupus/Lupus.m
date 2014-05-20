@@ -424,7 +424,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
             card = @{
                 @"label": @"Criceto Mannaro",
                 @"desc": @"Ai fini della partita e per il medium e' considerato un umano. Se e' visto nella notte dal Veggente muore insieme allo sbranato. Gioca per se stesso, non puo' essere sbranato ed e' l'unico vincitore se e' ancora vivo quando la partita termina.",
-                @"images": @[@"topo"],
+                @"images": @[@"criceto"],
                 @"role": @(LupusPlayerRole_TopoMannaro),
             };
             break;
@@ -433,7 +433,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
             card = @{
                 @"label": @"Massone",
                 @"desc": @"Sono due umani che conoscono reciprocamente il ruolo dell'altro, durante la prima notte il moderatore li chiama ed entrambi aprono gli occhi.",
-                @"images": @[@"massone1"],
+                @"images": @[@"massone"],
                 @"role": @(LupusPlayerRole_Massone),
             };
             break;
