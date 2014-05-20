@@ -86,6 +86,7 @@
                         <outlet property="barbutton_message" destination="kLO-in-ATw" id="q7B-qb-OuL"/>
                         <outlet property="barbutton_ready" destination="Xwj-pK-aRy" id="BEJ-kg-0Zp"/>
                         <outlet property="toolbar" destination="af0-0F-99J" id="5ib-0R-dST"/>
+                        <segue destination="OYW-s5-SYK" kind="modal" identifier="segue_card" id="e8z-Qt-Iys"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MGU-Sj-5Cg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -105,7 +106,47 @@
                     </items>
                 </toolbar>
             </objects>
-            <point key="canvasLocation" x="832" y="290"/>
+            <point key="canvasLocation" x="897" y="290"/>
+        </scene>
+        <!--Show Card View Controller-->
+        <scene sceneID="HxH-4Q-Rxh">
+            <objects>
+                <viewController id="OYW-s5-SYK" customClass="ShowCardViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="INz-qU-Lfg">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="villico1" id="uJA-kr-ntb">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="copertina" id="enN-gd-gzm">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gGU-xi-sxx">
+                                <rect key="frame" x="263" y="25" width="51" height="43"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="AppleColorEmoji" family="Apple Color Emoji" pointSize="42"/>
+                                <state key="normal" title="👌">
+                                    <color key="titleColor" red="1" green="0.1411764771" blue="0.16862745579999999" alpha="1" colorSpace="deviceRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="onButtonClose:" destination="OYW-s5-SYK" eventType="touchUpInside" id="e6M-3k-BFG"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="button_close" destination="gGU-xi-sxx" id="dYm-3O-xg0"/>
+                        <outlet property="iv_card" destination="uJA-kr-ntb" id="ZZK-aZ-WWb"/>
+                        <outlet property="iv_copertina" destination="enN-gd-gzm" id="iCv-J2-V2Q"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="H4g-Wf-Zxm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1339" y="290"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kfy-V2-mZx">
@@ -123,6 +164,10 @@
             <point key="canvasLocation" x="-42" y="290"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="copertina" width="365" height="650"/>
+        <image name="villico1" width="365" height="650"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

@@ -23,6 +23,7 @@
 		8A8ECAF819043C5800BC3DAD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8ECAE019043C5800BC3DAD /* UIKit.framework */; };
 		8A8ECB0019043C5800BC3DAD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8A8ECAFE19043C5800BC3DAD /* InfoPlist.strings */; };
 		8A8ECB0219043C5800BC3DAD /* LupusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A8ECB0119043C5800BC3DAD /* LupusTests.m */; };
+		8AED1423192BD92B00122E14 /* ShowCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AED1422192BD92B00122E14 /* ShowCardViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		8A8ECAFD19043C5800BC3DAD /* LupusTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LupusTests-Info.plist"; sourceTree = "<group>"; };
 		8A8ECAFF19043C5800BC3DAD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8A8ECB0119043C5800BC3DAD /* LupusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LupusTests.m; sourceTree = "<group>"; };
+		8AED1421192BD92B00122E14 /* ShowCardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowCardViewController.h; sourceTree = "<group>"; };
+		8AED1422192BD92B00122E14 /* ShowCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowCardViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,7 @@
 			children = (
 				8A55C0E6191BF89F00843DCD /* 1 step */,
 				8A55C3D619256ADF0099B7C6 /* 4 step */,
+				8AED1420192BD8FF00122E14 /* 5 step */,
 				8A8ECAEB19043C5800BC3DAD /* AppDelegate.h */,
 				8A8ECAEC19043C5800BC3DAD /* AppDelegate.m */,
 				8A8ECAEE19043C5800BC3DAD /* Images.xcassets */,
@@ -176,6 +180,15 @@
 				8A8ECAFE19043C5800BC3DAD /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8AED1420192BD8FF00122E14 /* 5 step */ = {
+			isa = PBXGroup;
+			children = (
+				8AED1421192BD92B00122E14 /* ShowCardViewController.h */,
+				8AED1422192BD92B00122E14 /* ShowCardViewController.m */,
+			);
+			name = "5 step";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A55C3D519256ACF0099B7C6 /* GameViewController.m in Sources */,
+				8AED1423192BD92B00122E14 /* ShowCardViewController.m in Sources */,
 				8A8ECAED19043C5800BC3DAD /* AppDelegate.m in Sources */,
 				8A55C0EB191BF91200843DCD /* MainViewController.m in Sources */,
 				8A8ECAE919043C5800BC3DAD /* main.m in Sources */,
