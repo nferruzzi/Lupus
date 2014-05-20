@@ -121,7 +121,12 @@
     
     switch (_game.masterState.state) {
         case LupusMasterState_Started:
-            message = @"Game started!";
+            if (_game.isMaster) {
+                message = @"Game started!";
+            } else {
+                NSDictionary *card = [LupusGame cardForRole:_game.playerState.role];
+                message = [card objectForKey:@"label"];
+            }
             started = TRUE;
             break;
             
