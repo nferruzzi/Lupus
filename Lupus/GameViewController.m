@@ -8,6 +8,7 @@
 
 #import "GameViewController.h"
 #import "Lupus.h"
+#import "ShowCardViewController.h"
 
 @interface GameViewController ()
 @property (nonatomic, strong) NSArray *arrayJoinedOnly;
@@ -15,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_counter;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_ready;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_message;
+@property (assign, nonatomic) BOOL cardShow;
 @end
 
 @implementation GameViewController
@@ -115,9 +117,12 @@
     }
     
     NSString *message;
+    BOOL started = FALSE;
+    
     switch (_game.masterState.state) {
         case LupusMasterState_Started:
             message = @"Game started!";
+            started = TRUE;
             break;
             
         case LupusMasterState_WaitingForPlayers:
@@ -138,6 +143,11 @@
     self.barbutton_counter.title = title;
     
     [self.tableView reloadData];
+    
+    if (!_cardShow && started) {
+        _cardShow = TRUE;
+        [self performSegueWithIdentifier:@"segue_card" sender:nil];
+    }
 }
 
 - (IBAction)onReady:(id)sender
@@ -150,6 +160,14 @@
 {
     NSAssert(_game.isMaster, @"I'm a player");
     [_game startGame];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"segue_card"]) {
+        ShowCardViewController *vc = segue.destinationViewController;
+        vc.role = _game.playerState.role;
+    }
 }
 
 #pragma mark - Table view data source
