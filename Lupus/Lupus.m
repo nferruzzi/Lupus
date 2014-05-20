@@ -258,6 +258,8 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 
 - (void)disconnect
 {
+    [self.advertiser stopAdvertisingPeer];
+    
     for (MCSession *session in _sessions) {
         [session disconnect];
     }
