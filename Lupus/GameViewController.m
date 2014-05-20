@@ -160,16 +160,21 @@
     }
     
     // NON FATE I FURBI !!!
-    if (_game.isMaster) {
+    BOOL me = ps == _game.playerState;
+    BOOL showCard = _game.isMaster || me;
+
+    cell.imageView.image = nil;
+
+    if (showCard) {
         NSDictionary *card = [LupusGame cardForRole:ps.role];
         NSArray *images = [card objectForKey:@"images"];
         if (images) {
             cell.imageView.image = [UIImage imageNamed:[images objectAtIndex:0]];
-        } else {
-            cell.imageView.image = nil;
         }
     }
     
+    cell.backgroundColor = me ? [UIColor yellowColor] : [UIColor whiteColor];
+
     return cell;
 }
 
