@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_counter;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_ready;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_message;
 @end
 
 @implementation GameViewController
@@ -107,10 +108,31 @@
         if (ps.state == LupusPlayerState_JoinedAndReady) ++ready;
     }
     
+    BOOL startable = [_arrayJoinedOnly count] == ready && ready > 1;
+
     if (_game.isMaster) {
-        BOOL startable = [_arrayJoinedOnly count] == ready && ready > 1;
         self.barbutton_ready.enabled = startable;
     }
+    
+    NSString *message;
+    switch (_game.masterState.state) {
+        case LupusMasterState_Started:
+            message = @"Game started!";
+            break;
+            
+        case LupusMasterState_WaitingForPlayers:
+            if (startable)
+                message = @"Ready to go!";
+            else
+                message = @"Waiting for players";
+            break;
+            
+        default:
+            break;
+    }
+    
+    _barbutton_message.title = message;
+
     
     NSString *title = [NSString stringWithFormat:@"%ld/%lu", (long)ready, (unsigned long)[_arrayJoinedOnly count]];
     self.barbutton_counter.title = title;

@@ -56,6 +56,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <toolbar key="tableFooterView" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="af0-0F-99J">
+                            <rect key="frame" x="0.0" y="136" width="320" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                            <items>
+                                <barButtonItem enabled="NO" title="1/10" id="CkD-CL-LFh"/>
+                                <barButtonItem style="plain" systemItem="flexibleSpace" id="e3Z-qF-0FU"/>
+                                <barButtonItem enabled="NO" id="kLO-in-ATw"/>
+                                <barButtonItem style="plain" systemItem="flexibleSpace" id="xYN-vR-z3B"/>
+                                <barButtonItem title="Ready!" id="Xwj-pK-aRy">
+                                    <connections>
+                                        <action selector="onReady:" destination="nMc-67-GCg" id="YCY-Y6-Cq7"/>
+                                    </connections>
+                                </barButtonItem>
+                            </items>
+                        </toolbar>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="player" textLabel="eue-Ts-1bP" rowHeight="50" style="IBUITableViewCellStyleDefault" id="vUq-HC-Tdm">
                                 <rect key="frame" x="0.0" y="86" width="320" height="50"/>
@@ -83,24 +98,12 @@
                     <navigationItem key="navigationItem" title="Lobby" id="3zG-SI-KlE"/>
                     <connections>
                         <outlet property="barbutton_counter" destination="CkD-CL-LFh" id="BTK-lS-wxe"/>
+                        <outlet property="barbutton_message" destination="kLO-in-ATw" id="q7B-qb-OuL"/>
                         <outlet property="barbutton_ready" destination="Xwj-pK-aRy" id="BEJ-kg-0Zp"/>
                         <outlet property="toolbar" destination="af0-0F-99J" id="5ib-0R-dST"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MGU-Sj-5Cg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="af0-0F-99J">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <items>
-                        <barButtonItem enabled="NO" title="1/10" id="CkD-CL-LFh"/>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="e3Z-qF-0FU"/>
-                        <barButtonItem title="Ready!" id="Xwj-pK-aRy">
-                            <connections>
-                                <action selector="onReady:" destination="nMc-67-GCg" id="YCY-Y6-Cq7"/>
-                            </connections>
-                        </barButtonItem>
-                    </items>
-                </toolbar>
             </objects>
             <point key="canvasLocation" x="832" y="290"/>
         </scene>
