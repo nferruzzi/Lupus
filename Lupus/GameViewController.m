@@ -189,20 +189,23 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"player"
                                                             forIndexPath:indexPath];
     
-    // Configure the cell...
+    // NON FATE I FURBI !!!
     PlayerState *ps = [_arrayJoinedOnly objectAtIndex:indexPath.row];
+    BOOL me = ps == _game.playerState;
+    BOOL showCard = _game.isMaster || me;
+
     cell.textLabel.text = ps.name;
     
     if (ps.state == LupusPlayerState_JoinedAndReady) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        if (me && _game.masterState.state == LupusMasterState_Started) {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
     } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
-    // NON FATE I FURBI !!!
-    BOOL me = ps == _game.playerState;
-    BOOL showCard = _game.isMaster || me;
-
     cell.imageView.image = nil;
 
     if (showCard) {
@@ -214,8 +217,21 @@
     }
     
     cell.backgroundColor = me ? [UIColor yellowColor] : [UIColor whiteColor];
+    cell.selectionStyle = me ? UITableViewCellSelectionStyleDefault : UITableViewCellSelectionStyleNone;
 
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (_game.masterState.state == LupusMasterState_Started) {
+        PlayerState *ps = [_arrayJoinedOnly objectAtIndex:indexPath.row];
+        if (ps == _game.playerState) {
+            [self performSegueWithIdentifier:@"segue_card" sender:nil];
+        }
+        [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
+    }
+    [tableView deselectRowAtIndexPath:indexPath animated:FALSE];
 }
 
 /*
