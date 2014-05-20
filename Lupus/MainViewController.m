@@ -39,6 +39,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.game disconnect];
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -69,6 +75,8 @@
     [self.navigationController setNavigationBarHidden:TRUE];
 }
 
+#pragma mark - MCBrowserViewController delegate
+
 // Notifies the delegate, when the user taps the done button
 - (void)browserViewControllerDidFinish:(MCBrowserViewController *)browserViewController
 {
@@ -85,7 +93,6 @@
     [browserViewController.browser stopBrowsingForPeers];
     [self.navigationController setNavigationBarHidden:FALSE];
     [self.navigationController popViewControllerAnimated:TRUE];
-    self.game = nil;
 }
 
 @end
