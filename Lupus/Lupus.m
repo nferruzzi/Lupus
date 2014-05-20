@@ -15,17 +15,13 @@
 @import MultipeerConnectivity;
 #import "Lupus.h"
 
-// Comment to get multiple clients per session.
-// Note: there is no sessions limits but there is a maximum number of clients per session
-// if you undef then you have to manage the limit when the advertiser receive an
-// invitation.
-#define PERCLIENT_SESSION
-
 // Service type used by bonjour
 NSString * const kLupusServiceType = @"dvlr-lupus";
 
 // High level notifications
 NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
+
+#pragma mark MasterState
 
 @implementation MasterState
 
@@ -73,6 +69,8 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 }
 
 @end
+
+#pragma mark PlayerState
 
 @implementation PlayerState
 
@@ -195,18 +193,19 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     return lp;
 }
 
+- (void)dealloc
+{
+    NSLog(@"Dealloc called");
+    [self disconnect];
+}
+
+#pragma mark UI 
 - (MCBrowserViewController *)browser
 {
     NSAssert(_master == FALSE, @"I'm a master");
     MCBrowserViewController *vc = [[MCBrowserViewController alloc] initWithServiceType:kLupusServiceType
                                                                                session:[_sessions lastObject]];
     return vc;
-}
-
-- (void)dealloc
-{
-    NSLog(@"Dealloc called");
-    [self disconnect];
 }
 
 #pragma mark advertiser
@@ -221,19 +220,11 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         return;
     }
     
-    MCSession *session = [_sessions lastObject];
-
-#ifdef PERCLIENT_SESSION
-    {
-#else
-    if (!session) {
-#endif
-        session = [[MCSession alloc] initWithPeer:_peerID
-                                 securityIdentity:nil
-                             encryptionPreference:MCEncryptionNone];
-        session.delegate = self;
-        [_sessions addObject:session];
-    }
+    MCSession *session = [[MCSession alloc] initWithPeer:_peerID
+                                        securityIdentity:nil
+                                    encryptionPreference:MCEncryptionNone];
+    session.delegate = self;
+    [_sessions addObject:session];
     invitationHandler(YES, session);
 }
 
@@ -242,7 +233,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     NSAssert(0, @"Error advertising:%@", error);
 }
 
-#pragma mark logic
+#pragma mark connections
     
 - (void)dispatchAsyncNotification:(NSString *)name
 {
@@ -251,36 +242,17 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
                                                             object:self];
     });
 }
-
-- (void)setStateForPlayer:(LupusPlayerState)state
+    
+- (void)broadcast:(NSData *)data withMode:(MCSessionSendDataMode)mode
 {
-    NSAssert(!_master, @"I'm a master");
-    self.playerState.state = state;
-    NSData *data = [self.playerState dump];
-    MCSession *session = [self.sessions lastObject];
-    [session sendData:data
-              toPeers:session.connectedPeers
-             withMode:MCSessionSendDataReliable
-                error:nil];
-}
-    
-- (void)updatePlayersWithMasterState
-{    
-    _masterState.playersState = [_peersState allValues];
-    
-    NSData *data = [_masterState dump];
     for (MCSession *session in _sessions) {
-        for (MCPeerID *peer in session.connectedPeers) {
-            [session sendData:data
-                      toPeers:@[peer]
-                     withMode:MCSessionSendDataUnreliable
-                        error:nil];
-        }
+        [session sendData:data
+                  toPeers:session.connectedPeers
+                 withMode:mode
+                    error:nil];
     }
-    
-    [self dispatchAsyncNotification:LupusMasterStateChanged];
 }
-    
+
 - (void)disconnect
 {
     for (MCSession *session in _sessions) {
@@ -289,6 +261,42 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     
     self.connected = FALSE;
 }
+
+#pragma mark Game Logic
+
+- (void)setStateForPlayer:(LupusPlayerState)state
+{
+    NSAssert(!_master, @"I'm a master");
+    self.playerState.state = state;
+    NSData *data = [self.playerState dump];
+    [self broadcast:data withMode:MCSessionSendDataReliable];
+}
+    
+- (void)updatePlayersWithMasterState
+{    
+    _masterState.playersState = [_peersState allValues];
+    NSData *data = [_masterState dump];
+    [self broadcast:data withMode:MCSessionSendDataUnreliable];
+    [self dispatchAsyncNotification:LupusMasterStateChanged];
+}
+
+- (void)startGame
+{
+    NSAssert(_master, @"I'm a player");
+    self.masterState.state = LupusMasterState_Started;
+    
+    NSMutableArray *cards = [NSMutableArray arrayWithArray:[LupusGame newDeckForPlayersCount:[self.masterState.playersState count]]];
+    
+    for (PlayerState *ps in self.masterState.playersState) {
+        NSUInteger index = (NSUInteger)arc4random_uniform((u_int32_t)[cards count]);
+        NSDictionary *card = [cards objectAtIndex:index];
+        ps.role = (LupusPlayerRole)[card[@"role"] integerValue];
+        [cards removeObjectAtIndex:index];
+    }
+    
+    [self updatePlayersWithMasterState];
+}
+
     
 #pragma mark MCSession delegate
     
@@ -343,25 +351,6 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 - (void)session:(MCSession *)session didFinishReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID atURL:(NSURL *)localURL withError:(NSError *)error
 {
     NSAssert(0, @"not supported");
-}
-
-#pragma mark Deck
-
-- (void)startGame
-{
-    NSAssert(_master, @"I'm a player");
-    self.masterState.state = LupusMasterState_Started;
-    
-    NSMutableArray *cards = [NSMutableArray arrayWithArray:[LupusGame newDeckForPlayersCount:[self.masterState.playersState count]]];
-    
-    for (PlayerState *ps in self.masterState.playersState) {
-        NSUInteger index = (NSUInteger)arc4random_uniform((u_int32_t)[cards count]);
-        NSDictionary *card = [cards objectAtIndex:index];
-        ps.role = (LupusPlayerRole)[card[@"role"] integerValue];
-        [cards removeObjectAtIndex:index];
-    }
-    
-    [self updatePlayersWithMasterState];
 }
 
 @end
