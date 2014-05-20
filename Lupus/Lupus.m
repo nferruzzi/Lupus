@@ -215,6 +215,12 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
        withContext:(NSData *)context
  invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
+    // Do no longer accept players when a match has started
+    if (_masterState.state == LupusMasterState_Started) {
+        invitationHandler(NO, nil);
+        return;
+    }
+    
     MCSession *session = [_sessions lastObject];
 
 #ifdef PERCLIENT_SESSION
