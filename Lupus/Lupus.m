@@ -378,7 +378,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_Villico:
             card = @{
                 @"label": @"Villico",
-                @"desc": @"",
+                @"desc": @"Un inutile umano. Il suo scopo durante il turno di giorno e' di scoprire chi sono i lupi mannari per farli impiccare.",
                 @"images": @[@"villico1, villico2, villico3"],
                 @"role": @(LupusPlayerRole_Villico),
             };
@@ -387,7 +387,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_LupoMannaro:
             card = @{
                 @"label": @"Lupo Mannaro",
-                @"desc": @"",
+                @"desc": @"Durante il suo turno di notte indica un villico e lo sbrana! si mette d'accordo con cenni del capo con gli altri lupi mannari per decidere la preda.",
                 @"images": @[@"lupo"],
                 @"role": @(LupusPlayerRole_LupoMannaro),
             };
@@ -396,7 +396,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_Guardia:
             card = @{
                 @"label": @"Guardia del corpo",
-                @"desc": @"",
+                @"desc": @"E' un umano che ogni notte protegge una persona a sua scelta. Se quella persona e' scelta dai lupi mannari non muore.",
                 @"images": @[@"guardia"],
                 @"role": @(LupusPlayerRole_Guardia),
             };
@@ -405,7 +405,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_Medium:
             card = @{
                 @"label": @"Medium",
-                @"desc": @"",
+                @"desc": @"E' un umano che puo' mettersi in contatto con i fantasmi. All'inizio della notte il moderatore lo chiama e gli fa' cenno di 'si' se la persona linciata nel turno precedente era un lupo mannaro, 'no' altrimenti.",
                 @"images": @[@"medium"],
                 @"role": @(LupusPlayerRole_Medium),
             };
@@ -414,7 +414,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_Veggente:
             card = @{
                 @"label": @"Veggente",
-                @"desc": @"",
+                @"desc": @"Durante il turno di notte indica al moderatore una persona, se la persona scelta e' lupo il moderatore fara' cenno di 'si' col capo, altrimenti 'no'.",
                 @"images": @[@"veggente"],
                 @"role": @(LupusPlayerRole_Veggente),
             };
@@ -422,8 +422,8 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 
         case LupusPlayerRole_TopoMannaro:
             card = @{
-                @"label": @"Topo Mannaro",
-                @"desc": @"",
+                @"label": @"Criceto Mannaro",
+                @"desc": @"Ai fini della partita e per il medium e' considerato un umano. Se e' visto nella notte dal Veggente muore insieme allo sbranato. Gioca per se stesso, non puo' essere sbranato ed e' l'unico vincitore se e' ancora vivo quando la partita termina.",
                 @"images": @[@"topo"],
                 @"role": @(LupusPlayerRole_TopoMannaro),
             };
@@ -432,7 +432,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         case LupusPlayerRole_Massone:
             card = @{
                 @"label": @"Massone",
-                @"desc": @"",
+                @"desc": @"Sono due umani che conoscono reciprocamente il ruolo dell'altro, durante la prima notte il moderatore li chiama ed entrambi aprono gli occhi.",
                 @"images": @[@"massone1"],
                 @"role": @(LupusPlayerRole_Massone),
             };
