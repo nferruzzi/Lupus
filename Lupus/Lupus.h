@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, LupusPlayerState) {
 - (MCBrowserViewController *)browser;
 - (void)disconnect;
 - (void)setStateForPlayer:(LupusPlayerState)state;
+- (void)startGame;
 
 @end
 

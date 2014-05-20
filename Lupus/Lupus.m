@@ -347,9 +347,21 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 
 #pragma mark Deck
 
-- (NSDictionary *)saveState
+- (void)startGame
 {
-    return nil;
+    NSAssert(_master, @"I'm a player");
+    self.masterState.state = LupusMasterState_Started;
+    
+    NSMutableArray *cards = [NSMutableArray arrayWithArray:[LupusGame newDeckForPlayersCount:[self.masterState.playersState count]]];
+    
+    for (PlayerState *ps in self.masterState.playersState) {
+        NSUInteger index = (NSUInteger)arc4random_uniform((u_int32_t)[cards count]);
+        NSDictionary *card = [cards objectAtIndex:index];
+        ps.role = (LupusPlayerRole)[card[@"role"] integerValue];
+        [cards removeObjectAtIndex:index];
+    }
+    
+    [self updatePlayersWithMasterState];
 }
 
 @end
