@@ -11,6 +11,9 @@
 
 @interface GameViewController ()
 @property (nonatomic, strong) NSArray *arrayJoinedOnly;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_counter;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_ready;
 @end
 
 @implementation GameViewController
@@ -44,6 +47,14 @@
 
     // Configure first time
     [self onMasterStateChanged:nil];
+    
+    self.navigationController.toolbarHidden = FALSE;
+    self.toolbarItems = _toolbar.items;
+    [self.toolbar removeFromSuperview];
+    
+    if (_game.isMaster) {
+        [self.barbutton_ready setTitle:@"Start!"];
+    }
 }
 
 - (void)onBack:(id)sender
@@ -86,7 +97,26 @@
 
     self.arrayJoinedOnly = [_game.masterState.playersState filteredArrayUsingPredicate:predicate];
 
+    if (!_game.isMaster) {
+        self.barbutton_ready.enabled = _game.playerState.state != LupusPlayerState_JoinedAndReady;
+    }
+
+    NSInteger ready = 0;
+    for (PlayerState *ps in _arrayJoinedOnly) {
+        if (ps.state == LupusPlayerState_JoinedAndReady) ++ready;
+    }
+    
+    NSString *title = [NSString stringWithFormat:@"%d/%d", ready, [_arrayJoinedOnly count]];
+    self.barbutton_counter.title = title;
+    
     [self.tableView reloadData];
+}
+
+- (IBAction)onReady:(id)sender
+{
+    if (!_game.isMaster) {
+        [_game setStateForPlayer:LupusPlayerState_JoinedAndReady];
+    }
 }
 
 #pragma mark - Table view data source
@@ -111,6 +141,12 @@
     // Configure the cell...
     PlayerState *ps = [_arrayJoinedOnly objectAtIndex:indexPath.row];
     cell.textLabel.text = ps.name;
+    
+    if (ps.state == LupusPlayerState_JoinedAndReady) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     
     return cell;
 }
