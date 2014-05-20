@@ -10,7 +10,7 @@
 #import "Lupus.h"
 #import "ShowCardViewController.h"
 
-@interface GameViewController ()
+@interface GameViewController () <UIAlertViewDelegate>
 @property (nonatomic, strong) NSArray *arrayJoinedOnly;
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *barbutton_counter;
@@ -59,6 +59,9 @@
         [self.barbutton_ready setTitle:@"Start!"];
         [self.barbutton_ready setAction:@selector(onStart:)];
     }
+    
+    [self.barbutton_message setTarget:self];
+    [self.barbutton_message setAction:@selector(onMessage:)];
 }
 
 - (void)onBack:(id)sender
@@ -118,6 +121,8 @@
     
     NSString *message;
     BOOL started = FALSE;
+
+    _barbutton_message.enabled = FALSE;
     
     switch (_game.masterState.state) {
         case LupusMasterState_Started:
@@ -126,6 +131,7 @@
             } else {
                 NSDictionary *card = [LupusGame cardForRole:_game.playerState.role];
                 message = [card objectForKey:@"label"];
+                _barbutton_message.enabled = TRUE;
             }
             started = TRUE;
             break;
@@ -165,6 +171,18 @@
 {
     NSAssert(_game.isMaster, @"I'm a player");
     [_game startGame];
+}
+
+- (void)onMessage:(id)sender
+{
+    NSDictionary *card = [LupusGame cardForRole:_game.playerState.role];
+
+    UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Ruolo"
+                                                 message:[card objectForKey:@"desc"]
+                                                delegate:self
+                                       cancelButtonTitle:nil
+                                       otherButtonTitles:@"Capito", nil];
+    [av show];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
