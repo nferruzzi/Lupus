@@ -54,6 +54,7 @@
     
     if (_game.isMaster) {
         [self.barbutton_ready setTitle:@"Start!"];
+        [self.barbutton_ready setAction:@selector(onStart:)];
     }
 }
 
@@ -119,9 +120,14 @@
 
 - (IBAction)onReady:(id)sender
 {
-    if (!_game.isMaster) {
-        [_game setStateForPlayer:LupusPlayerState_JoinedAndReady];
-    }
+    NSAssert(!_game.isMaster, @"I'm a master");
+    [_game setStateForPlayer:LupusPlayerState_JoinedAndReady];
+}
+
+- (IBAction)onStart:(id)sender
+{
+    NSAssert(_game.isMaster, @"I'm a player");
+    [_game startGame];
 }
 
 #pragma mark - Table view data source
