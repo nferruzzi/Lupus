@@ -79,6 +79,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     self = [super init];
     if (self) {
         self.name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
+        self.uuid = [aDecoder decodeObjectOfClass:[NSUUID class] forKey:@"uuid"];
         self.role = [[aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"role"] integerValue];
         self.state = [[aDecoder decodeObjectOfClass:[NSNumber class] forKey:@"state"] integerValue];
     }
@@ -88,6 +89,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:_name forKey:@"name"];
+    [aCoder encodeObject:_uuid forKey:@"uuid"];
     [aCoder encodeObject:[NSNumber numberWithInteger:_role] forKey:@"role"];
     [aCoder encodeObject:[NSNumber numberWithInteger:_state] forKey:@"state"];
 }
@@ -170,6 +172,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     if (self) {
         self.master = FALSE;
         self.playerState = [PlayerState new];
+        self.playerState.uuid = [NSUUID UUID];
         self.playerState.name = name;
         MCSession *session = [[MCSession alloc] initWithPeer:_peerID
                                             securityIdentity:nil
@@ -199,7 +202,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     [self disconnect];
 }
 
-#pragma mark UI 
+#pragma mark UI
 - (MCBrowserViewController *)browser
 {
     NSAssert(_master == FALSE, @"I'm a master");
@@ -272,11 +275,12 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     [self broadcast:data withMode:MCSessionSendDataReliable];
 }
     
-- (void)updatePlayersWithMasterState
+- (void)updatePlayersWithMasterState:(MCSessionSendDataMode)mode
 {    
+    NSAssert(_master, @"I'm a player");
     _masterState.playersState = [_peersState allValues];
     NSData *data = [_masterState dump];
-    [self broadcast:data withMode:MCSessionSendDataUnreliable];
+    [self broadcast:data withMode:mode];
     [self dispatchAsyncNotification:LupusMasterStateChanged];
 }
 
@@ -294,7 +298,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         [cards removeObjectAtIndex:index];
     }
     
-    [self updatePlayersWithMasterState];
+    [self updatePlayersWithMasterState:MCSessionSendDataReliable];
 }
 
     
@@ -306,6 +310,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
     NSLog(@"STATE CHANGE: %@ %d", peerID, (int)state);
     if (_master) {
         if (state == MCSessionStateConnected) {
+            // We store it, but we can't really use it because we have no UUID yet
             PlayerState *ps = [PlayerState new];
             ps.name = peerID.displayName;
             [self.peersState setObject:ps forKey:peerID];
@@ -313,7 +318,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         if (state == MCSessionStateNotConnected) {
             [self.peersState removeObjectForKey:peerID];
         }
-        [self updatePlayersWithMasterState];
+        [self updatePlayersWithMasterState:MCSessionSendDataUnreliable];
     } else {
         _connected = state == MCSessionStateConnected;
     }
@@ -327,9 +332,15 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
         PlayerState *ps = [PlayerState playerStateFromData:data];
         [self.peersState setObject:ps forKey:peerID];
         NSLog(@"Player state: %@", ps);
-        [self updatePlayersWithMasterState];
+        [self updatePlayersWithMasterState:MCSessionSendDataUnreliable];
     } else {
         self.masterState = [MasterState masterStateFromData:data];
+        for (PlayerState *ps in _masterState.playersState) {
+            if ([ps.uuid isEqual:_playerState.uuid]) {
+                self.playerState = ps;
+                NSLog(@"New state received: %@", _playerState);
+            }
+        }
         [self dispatchAsyncNotification:LupusMasterStateChanged];
         NSLog(@"Master state: %@", _masterState);
     }

@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger, LupusPlayerState) {
 @interface PlayerState : NSObject <NSCoding, NSSecureCoding>
 
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSUUID *uuid;
 @property (nonatomic, assign) LupusPlayerRole role;
 @property (nonatomic, assign) LupusPlayerState state;
 
