@@ -106,7 +106,12 @@
         if (ps.state == LupusPlayerState_JoinedAndReady) ++ready;
     }
     
-    NSString *title = [NSString stringWithFormat:@"%d/%d", ready, [_arrayJoinedOnly count]];
+    if (_game.isMaster) {
+        BOOL startable = [_arrayJoinedOnly count] == ready && ready > 1;
+        self.barbutton_ready.enabled = startable;
+    }
+    
+    NSString *title = [NSString stringWithFormat:@"%ld/%lu", (long)ready, (unsigned long)[_arrayJoinedOnly count]];
     self.barbutton_counter.title = title;
     
     [self.tableView reloadData];
