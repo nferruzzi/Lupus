@@ -186,7 +186,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
 + (id)lupusGameWithHostName:(NSString *)name
                     options:(NSDictionary *)options
 {
-    LupusGame *lp = [[LupusGame alloc] initWithHostName:[[UIDevice currentDevice] name]];
+    LupusGame *lp = [[LupusGame alloc] initWithHostName:name];
     return lp;
 }
 
