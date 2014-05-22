@@ -249,7 +249,7 @@
 {
     if (_game.masterState.state == LupusMasterState_Started) {
         PlayerState *ps = [_arrayJoinedOnly objectAtIndex:indexPath.row];
-        if (ps == _game.playerState) {
+        if ([ps.uuid isEqual:_game.playerState.uuid]) {
             [self performSegueWithIdentifier:@"segue_card" sender:nil];
         }
         [tableView deselectRowAtIndexPath:indexPath animated:TRUE];
