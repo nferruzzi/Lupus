@@ -379,7 +379,7 @@ NSString * const LupusMasterStateChanged = @"LupusMasterStateChanged";
             card = @{
                 @"label": @"Villico",
                 @"desc": @"Un inutile umano. Il suo scopo durante il turno di giorno e' di scoprire chi sono i lupi mannari per farli impiccare.",
-                @"images": @[@"villico1, villico2, villico3"],
+                @"images": @[@"villico1", @"villico2", @"villico3"],
                 @"role": @(LupusPlayerRole_Villico),
             };
             break;
